@@ -33,7 +33,6 @@ def save_score(email, username, score, total, wrong_questions):
 
 def admin_panel():
     st.title("Admin Panel")
-
     uploaded_file = st.file_uploader("Upload CSV to add questions", type=["csv"])
     if uploaded_file is not None:
         df_new = pd.read_csv(uploaded_file)
@@ -41,7 +40,6 @@ def admin_panel():
         df_combined = pd.concat([df_old, df_new], ignore_index=True)
         df_combined.to_csv("questions.csv", index=False)
         st.success("Questions updated successfully!")
-
     st.write("Current Questions:")
     st.dataframe(load_questions())
 
@@ -89,7 +87,7 @@ def mcq_test():
                 for key in ["questions_order", "current_index", "score", "user_answers", "selected_option", "quiz_ended", "wrong_questions"]:
                     if key in st.session_state:
                         del st.session_state[key]
-                st.experimental_rerun()
+                st.stop()
             return
 
         index = st.session_state.questions_order[st.session_state.current_index]
@@ -125,12 +123,12 @@ def mcq_test():
                 if st.session_state.current_index >= len(st.session_state.questions_order):
                     st.session_state.quiz_ended = True
                     save_score(email, username, st.session_state.score, len(st.session_state.questions_order), st.session_state.wrong_questions)
-                    st.experimental_rerun()
+                    st.stop()
         with col2:
             if st.session_state.selected_option and st.button("End Quiz"):
                 st.session_state.quiz_ended = True
                 save_score(email, username, st.session_state.score, len(st.session_state.questions_order), st.session_state.wrong_questions)
-                st.experimental_rerun()
+                st.stop()
 
 def main():
     st.sidebar.title("Navigation")
