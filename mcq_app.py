@@ -1,4 +1,7 @@
-import streamlit as st import pandas as pd import os import random
+import streamlit as st
+import pandas as pd
+import os
+import random
 
 @st.cache_data def load_questions(): return pd.read_csv("questions.csv")
 
