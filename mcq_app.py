@@ -77,12 +77,13 @@ def mcq_test():
             st.success(f"{username}, your score is {st.session_state.score}/{len(st.session_state.questions_order)}")
             st.subheader("Quiz Summary")
             for i, index in enumerate(st.session_state.questions_order):
-                row = daily_questions.iloc[index]
-                st.markdown(f"**Q{i+1}: {row['question']}**")
-                st.markdown(f"Your Answer: {st.session_state.user_answers[i]}")
-                st.markdown(f"Correct Answer: {row['answer']}")
-                st.markdown(f"Explanation: {row['explanation']}")
-                st.markdown("---")
+                if i < len(st.session_state.user_answers):
+                    row = daily_questions.iloc[index]
+                    st.markdown(f"**Q{i+1}: {row['question']}**")
+                    st.markdown(f"Your Answer: {st.session_state.user_answers[i]}")
+                    st.markdown(f"Correct Answer: {row['answer']}")
+                    st.markdown(f"Explanation: {row['explanation']}")
+                    st.markdown("---")
             if st.button("Restart Quiz"):
                 for key in ["questions_order", "current_index", "score", "user_answers", "selected_option", "quiz_ended", "wrong_questions"]:
                     if key in st.session_state:
