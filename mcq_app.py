@@ -8,12 +8,16 @@ from datetime import datetime
 def load_questions():
     return pd.read_csv("questions.csv")
 
+@st.cache_data
+def load_scores():
+    if os.path.exists("scores.csv"):
+        return pd.read_csv("scores.csv")
+    else:
+        return pd.DataFrame(columns=["email", "username", "date", "score", "total", "wrong_questions"])
+
 def save_score(email, username, score, total, wrong_questions):
     date = datetime.now().strftime("%Y-%m-%d")
-    if os.path.exists("scores.csv"):
-        scores = pd.read_csv("scores.csv")
-    else:
-        scores = pd.DataFrame(columns=["email", "username", "date", "score", "total", "wrong_questions"])
+    scores = load_scores()
     scores = pd.concat([
         scores,
         pd.DataFrame([{
@@ -47,6 +51,18 @@ def mcq_test():
     username = st.text_input("Enter your name")
 
     if email and username:
+        if st.button("View My Progress"):
+            scores = load_scores()
+            user_scores = scores[scores["email"] == email]
+            if not user_scores.empty:
+                st.subheader("Your Progress History")
+                st.dataframe(user_scores.sort_values("date", ascending=False))
+                chart_data = user_scores[["date", "score"]].set_index("date")
+                st.line_chart(chart_data)
+            else:
+                st.info("No records found for this email.")
+            st.stop()
+
         questions = load_questions()
         daily_questions = questions[questions['tag'] == 'daily']
 
